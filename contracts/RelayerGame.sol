@@ -7,7 +7,6 @@ library RelayerGame {
         Block finalizedBlock;
         uint32[] samples;
         uint256 deadLineStep;
-        mapping(uint32 => Proposal) proposalPool;
         /// (H100 => {})
         /// (H50a => {p: H100})
         /// (H50b => {p: H100})

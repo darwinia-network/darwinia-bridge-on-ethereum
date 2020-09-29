@@ -7,17 +7,21 @@
     "test-blake2": "truffle test test/TestBlake2b.js",
     "test-mmr": "truffle test test/TestDarwiniaRelay.js",
     "test-mmrlib": "truffle test test/TestMMRLib.js",
-    "test-relayergame": "truffle test test/TestRelayerGame.js"
+    "test-relayergame": "truffle test test/TestRelayerGame.js",
+    "test-poarelay": "truffle test test/TestPOARelay.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "truffle-hdwallet-provider": "^1.0.17",
-    "chai-as-promised": "^7.1.1",
-    "chai": "^4.2.0",
-    "chai-bn": "^0.1.1",
-    "web3": "^1.2.9",
+    "@openzeppelin/contracts": "^3.1.0",
+    "@openzeppelin/test-helpers": "^0.5.6",
     "blakejs": "^1.1.0",
-    "pify": ""
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "chai-bn": "^0.1.1",
+    "chai-bignumber": "^3.0.0",
+    "pify": "",
+    "truffle-hdwallet-provider": "^1.0.17",
+    "web3": "^1.2.9"
   }
 }

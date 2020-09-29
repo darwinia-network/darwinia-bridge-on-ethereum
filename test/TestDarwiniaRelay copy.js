@@ -11,6 +11,10 @@ contract('DarwiniaRelay1', (accounts) => {
   let res;
   let darwiniaRelay;
   before(async () => {
+    // blake2b = await Blake2b.new();
+    // console.log('blake2b:', blake2b)
+    // await MMR.link('Blake2b', blake2b.address);
+
     mmrLib = await MMR.new();
     // console.log('mmrLib:', mmrLib)
     // await MMR.link('Blake2b', blake2b.address);
@@ -55,9 +59,7 @@ contract('DarwiniaRelay1', (accounts) => {
       ]
       for (let i = 0; i < data.length; i++) {
         await mmr.append(data[i], data[i]);
-        let root = await mmr.getRoot()
-        let size = await mmr.getSize()
-        console.log(`root info: ${root} ${size}`)
+        mmr.root.call()
       }
     });
 

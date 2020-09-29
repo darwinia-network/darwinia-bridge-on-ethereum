@@ -178,6 +178,8 @@ contract('MerkleMountainRange', async () => {
         for (let i = 0; i < 8; i++) {
           await mmr.append('0x0000', '0x0000');
         }
+        res = await mmr.getMerkleProof(i+1);
+        console.log(res)
         (await mmr.getSize()).should.be.a.bignumber.that.equals('15');
       });
       it('should increase the size to 50 when 27 items are added', async () => {
@@ -195,14 +197,16 @@ contract('MerkleMountainRange', async () => {
         for (let i = 0; i < leafHashs.length; i++) {
           await mmr.append(`0x000${i}`, leafHashs[i]);
           const root = await mmr.getRoot();
+         
           console.log(`append ${leafHashs[i]}, root: ${root}`)
         }
       });
       it('should return pass true when it receives a valid merkle proof', async () => {
-        let index = 1;
-        res = await mmr.getMerkleProof(index);
-        console.log(`index: ${index} proof`, res)
-        await mmrLib.inclusionProof(res.root, res.width, index,  '0x00',leafHashs[index-1], res.peakBagging, res.siblings).should.eventually.equal(true);
+        for(let index = 1; index < leafHashs.length; index++) {
+          res = await mmr.getMerkleProof(index);
+          console.log(`index: ${index} proof`, res)
+          await mmrLib.inclusionProof(res.root, res.width, index,  '0x00',leafHashs[index-1], res.peakBagging, res.siblings).should.eventually.equal(true);
+        }
       })
       it('should return 0x2f... for its root value', async () => {
         res.root.should.equal('0x2dee5b87a481a9105cb4b2db212a1d8031d65e9e6e68dc5859bef5e0fdd934b2');

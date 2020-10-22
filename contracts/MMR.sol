@@ -12,14 +12,6 @@ import "./Blake2b.sol";
 library MMR {
     using Blake2b for Blake2b.Instance;
 
-    struct Tree {
-        bytes32 root;
-        uint256 size;
-        uint256 width;
-        mapping(uint256 => bytes32) hashes;
-        mapping(bytes32 => bytes) data;
-    }
-
     function bytesToBytes32(bytes memory b, uint256 offset)
         private
         pure
@@ -49,136 +41,8 @@ library MMR {
       return bytesToBytes32(instance.finalize(input), 0);
     }
 
-    /**
-     * @dev This only stores the hashed value of the leaf.
-     *      If you need to retrieve the detail data later, use a map to store them.
-     */
-    function append(Tree storage tree, bytes memory data, bytes32 leafHash) public {
-        // Hash the leaf node first
-        bytes32 dataHash = Blake2bHash(data);
-        if(Blake2bHash(tree.data[dataHash]) != dataHash) {
-            tree.data[dataHash] = data;
-        }
-        bytes32 leaf = leafHash;
-        // Put the hashed leaf to the map
-        tree.hashes[tree.size + 1] = leaf;
-        tree.width += 1;
-        // Find peaks for the enlarged tree
-        uint256[] memory peakIndexes = getPeakIndexes(tree.width);
-        // The right most peak's value is the new size of the updated tree
-        tree.size = getSize(tree.width);
-        // Starting from the left-most peak, get all peak hashes using _getOrCreateNode() function.
-        bytes32[] memory peaks = new bytes32[](peakIndexes.length);
-        for (uint i = 0; i < peakIndexes.length; i++) {
-            peaks[i] = _getOrCreateNode(tree, peakIndexes[i]);
-        }
-        // Create the root hash and update the tree
-        tree.root = peakBagging(tree.width, peaks);
-    }
-
-    function getPeaks(Tree storage tree) public view returns (bytes32[] memory peaks) {
-        // Find peaks for the enlarged tree
-        uint256[] memory peakNodeIndexes = getPeakIndexes(tree.width);
-        // Starting from the left-most peak, get all peak hashes using _getOrCreateNode() function.
-        peaks = new bytes32[](peakNodeIndexes.length);
-        for (uint i = 0; i < peakNodeIndexes.length; i++) {
-            peaks[i] = tree.hashes[peakNodeIndexes[i]];
-        }
-        return peaks;
-    }
-
-    function getLeafIndex(uint width) public pure returns (uint) {
-        if(width % 2 == 1) {
-            return getSize(width);
-        } else {
-            return getSize(width - 1) + 1;
-        }
-    }
-
     function getSize(uint width) public pure returns (uint256) {
         return (width << 1) - numOfPeaks(width);
-    }
-
-    /**
-     * @dev It returns the root value of the tree
-     */
-    function getRoot(Tree storage tree) public view returns (bytes32) {
-        return tree.root;
-    }
-
-    /**
-     * @dev It returns the size of the tree
-     */
-    function getSize(Tree storage tree) public view returns (uint256) {
-        return tree.size;
-    }
-
-    /**
-     * @dev It returns the hash value of a node for the given position. Note that the index starts from 1
-     */
-    function getNode(Tree storage tree, uint256 index) public view returns (bytes32) {
-        return tree.hashes[index];
-    }
-
-    /**
-     * @dev It returns a merkle proof for a leaf. Note that the index starts from 1
-     */
-    function getMerkleProof(Tree storage tree, uint256 index) public view returns (
-        bytes32 root,
-        uint256 width,
-        bytes32[] memory peakBagging,
-        bytes32[] memory siblings
-    ){
-        require(index < tree.size, "Out of range");
-        require(isLeaf(index), "Not a leaf");
-
-        root = tree.root;
-        width = tree.width;
-        // Find all peaks for bagging
-        uint256[] memory peaks = getPeakIndexes(tree.width);
-
-        peakBagging = new bytes32[](peaks.length);
-        uint256 cursor;
-        for (uint i = 0; i < peaks.length; i++) {
-            // Collect the hash of all peaks
-            peakBagging[i] = tree.hashes[peaks[i]];
-            // Find the peak which includes the target index
-            if (peaks[i] >= index && cursor == 0) {
-                cursor = peaks[i];
-            }
-        }
-        uint256 left;
-        uint256 right;
-
-        // Get hashes of the siblings in the mountain which the index belongs to.
-        // It moves the cursor from the summit of the mountain down to the target index
-        uint8 height = heightAt(cursor);
-        siblings = new bytes32[](height - 1);
-        while (cursor != index) {
-            height--;
-            (left, right) = getChildren(cursor);
-            // Move the cursor down to the left side or right side
-            cursor = index <= left ? left : right;
-            // Remaining node is the sibling
-            siblings[height - 1] = tree.hashes[index <= left ? right : left];
-        }
-    }
-
-    function rollUp(
-        bytes32 root,
-        uint256 width,
-        bytes32[] memory peaks,
-        bytes32[] memory itemHashes
-    ) public returns (bytes32 newRoot) {
-        // Check the root equals the peak bagging hash
-        require(root == peakBagging(width, peaks), "Invalid root hash from the peaks");
-        uint tmpWidth = width;
-        bytes32[255] memory tmpPeakMap = peaksToPeakMap(width, peaks);
-        for (uint i = 0; i < itemHashes.length; i++) {
-            tmpPeakMap = peakUpdate(tmpWidth, tmpPeakMap, itemHashes[i]);
-            tmpWidth++;
-        }
-        return peakBagging(tmpWidth, peakMapToPeaks(tmpWidth, tmpPeakMap));
     }
 
     function peakBagging(uint256 width, bytes32[] memory peaks) view public returns (bytes32) {
@@ -226,53 +90,6 @@ library MMR {
             }
         }
         require(count == arrLength, "Invalid number of peaks");
-    }
-
-    function peakUpdate(
-        uint width,
-        bytes32[255] memory prevPeakMap,
-        bytes32 itemHash
-    ) public returns (
-        bytes32[255] memory nextPeakMap
-    ) {
-        uint newWidth = width + 1;
-        uint cursorIndex = getLeafIndex(newWidth);
-        bytes32 cursorNode = hashLeaf(cursorIndex, itemHash);
-        uint bitIndex;
-        uint peakRef;
-        bool prevPeakExist;
-        bool nextPeakExist;
-        bool obtained;
-
-        for(uint height = 1; height <= 255; height++) {
-            // Index starts from the right most bit
-            bitIndex = 255 - height;
-            if(obtained) {
-                nextPeakMap[bitIndex] = prevPeakMap[bitIndex];
-            } else {
-                peakRef = 1 << (height - 1);
-                prevPeakExist = (width & peakRef) != 0;
-                nextPeakExist = (newWidth & peakRef) != 0;
-
-                // Get new cursor node with hashing the peak and the current cursor
-                cursorIndex++;
-                if(prevPeakExist) {
-                    cursorNode = hashBranch(cursorIndex, prevPeakMap[bitIndex], cursorNode);
-                }
-                // If new peak exists for the bit index
-                if(nextPeakExist) {
-                    // If prev peak exists for the bit index
-                    if(prevPeakExist) {
-                        nextPeakMap[bitIndex] = prevPeakMap[bitIndex];
-                    } else {
-                        nextPeakMap[bitIndex] = cursorNode;
-                    }
-                    obtained = true;
-                } else {
-                    nextPeakMap[bitIndex] = bytes32(0);
-                }
-            }
-        }
     }
 
     /** Pure functions */
@@ -524,22 +341,5 @@ library MMR {
             bits = bits >> 1;
         }
         return num;
-    }
-
-    /**
-     * @dev It returns the hash value of the node for the index.
-     *      If the hash already exists it simply returns the stored value. On the other hand,
-     *      it computes hashes recursively downward.
-     *      Only appending an item calls this function
-     */
-    function _getOrCreateNode(Tree storage tree, uint256 index) private returns (bytes32) {
-        require(index <= tree.size, "Out of range");
-        if (tree.hashes[index] == bytes32(0)) {
-            (uint256 leftIndex, uint256 rightIndex) = getChildren(index);
-            bytes32 leftHash = _getOrCreateNode(tree, leftIndex);
-            bytes32 rightHash = _getOrCreateNode(tree, rightIndex);
-            tree.hashes[index] = hashBranch(index, leftHash, rightHash);
-        }
-        return tree.hashes[index];
     }
 }

@@ -58,12 +58,12 @@ contract LightClientBridge is Pausable, Initializable, ValidatorRegistry {
     struct NextValidatorSet {
         bytes32 root;
         uint64 id;
-        uint64 len; 
+        uint64 len;
     }
 
     struct Payload {
         bytes32 mmr;
-        NextValidatorSet nextValidatorSet; 
+        NextValidatorSet nextValidatorSet;
     }
 
     struct Commitment {
@@ -127,7 +127,7 @@ contract LightClientBridge is Pausable, Initializable, ValidatorRegistry {
         uint256 beefyMMRLeafIndex,
         uint256 beefyMMRLeafCount,
         bytes32[] calldata peaks,
-        bytes32[] calldata siblings 
+        bytes32[] calldata siblings
     ) external view returns (bool) {
         return
             MMR.inclusionProof(
@@ -304,7 +304,7 @@ contract LightClientBridge is Pausable, Initializable, ValidatorRegistry {
         uint256[] memory validatorPositions,
         address[] memory validatorPublicKeys,
         bytes32[][] memory validatorPublicKeyMerkleProofs
-    ) 
+    )
         private
         view
     {

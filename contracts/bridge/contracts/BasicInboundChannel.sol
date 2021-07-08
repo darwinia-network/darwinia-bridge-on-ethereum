@@ -38,7 +38,7 @@ contract BasicInboundChannel {
         uint256 beefyMMRLeafIndex,
         uint256 beefyMMRLeafCount,
         bytes32[] memory peaks,
-        bytes32[] memory siblings 
+        bytes32[] memory siblings
     ) public {
         require(
             lightClientBridge.verifyBeefyMerkleLeaf(

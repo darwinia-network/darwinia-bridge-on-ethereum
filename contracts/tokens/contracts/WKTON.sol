@@ -110,7 +110,7 @@ contract WKTON is ERC223 {
     }
 
     function transferFrom(address _from, address _to, uint256 _amount, bytes _data)
-        public 
+        public
         returns (bool success)
     {
         require(transferFrom(_from, _to, _amount));

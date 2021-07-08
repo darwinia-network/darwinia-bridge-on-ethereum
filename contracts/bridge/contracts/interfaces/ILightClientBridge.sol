@@ -6,12 +6,12 @@ interface ILightClientBridge {
     struct NextValidatorSet {
         bytes32 root;
         uint64 id;
-        uint64 len; 
+        uint64 len;
     }
 
     struct Payload {
         bytes32 mmr;
-        NextValidatorSet nextValidatorSet; 
+        NextValidatorSet nextValidatorSet;
     }
 
     struct Commitment {
@@ -27,7 +27,7 @@ interface ILightClientBridge {
         uint256 validatorPosition,
         address validatorPublicKey,
         bytes32[] calldata validatorPublicKeyMerkleProof
-    ) external; 
+    ) external;
 
     function completeSignatureCommitment(
         uint256 id,
@@ -36,14 +36,14 @@ interface ILightClientBridge {
         uint256[] calldata validatorPositions,
         address[] calldata validatorPublicKeys,
         bytes32[][] calldata validatorPublicKeyMerkleProofs
-    ) external; 
+    ) external;
 
     function verifyBeefyMerkleLeaf(
         bytes calldata beefyMMRLeaf,
         uint256 beefyMMRLeafIndex,
         uint256 beefyMMRLeafCount,
         bytes32[] calldata peaks,
-        bytes32[] calldata siblings 
+        bytes32[] calldata siblings
     ) external view returns (bool);
 
     function getFinalizedBlockNumber() external view returns (uint256);

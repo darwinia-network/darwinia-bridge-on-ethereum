@@ -230,12 +230,12 @@ contract ScaleTest is DSTest {
         Input.Data memory data = Input.from(hexData);
 
         (bytes memory prefix, bytes4 methodID, uint32 index, bytes32 root) = Scale.decodeMMRRoot(data);
-    
+
         console.log(uint256(index));
         console.logBytes32(root);
         console.logBytes(prefix);
         console.logBytes4(methodID);
-        
+
         assertEq0(prefix, hex"43726162");
         assertEq(uint256(index), 16384);
         assertEq(root, bytes32(hex"5fe7f977e71dba2ea1a68e21057beebb9be2ac30c6410aa38d4f3fbe41dcffd2"));
@@ -254,7 +254,7 @@ contract ScaleTest is DSTest {
     }
 
     function testHackDecodeMMRRootAndDecodeAuthorities() public {
-        
+
         // let str = api.createType('{"prefix": "Vec<u8>", "index": "Compact<u32>", "root": "H256"}', new Uint8Array([16, 68, 82, 77, 76, 85, 12, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4]))
         // console.log(str)
         // console.log(str.toHex())

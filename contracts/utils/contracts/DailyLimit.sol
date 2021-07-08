@@ -11,7 +11,7 @@ contract DailyLimit {
     mapping(address => uint) public lastDay;
     mapping(address => uint) public spentToday;
 
-    /// ==== Internal functions ==== 
+    /// ==== Internal functions ====
 
     /// @dev Contract constructor sets initial owners, required number of confirmations and daily mint limit.
     /// @param _token Token address.
@@ -58,11 +58,11 @@ contract DailyLimit {
         if (spentToday[token] + amount > dailyLimit[token] || spentToday[token] + amount < spentToday[token]) {
           return false;
         }
-            
+
         return true;
     }
 
-    /// ==== Web3 call functions ==== 
+    /// ==== Web3 call functions ====
 
     /// @dev Returns maximum withdraw amount.
     /// @param token Token address.

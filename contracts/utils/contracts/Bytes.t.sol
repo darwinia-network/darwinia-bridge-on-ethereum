@@ -21,7 +21,7 @@ contract BytesTest is DSTest {
         assertTrue(true);
     }
 
-    
+
     function testToBytes32() public logs_gas{
         bytes memory data1 = hex"15eaf80e3066655d1638aa316fe417d6998efbc383204099c00d5429c8d06456";
         bytes32 res1 = data1.toBytes32();

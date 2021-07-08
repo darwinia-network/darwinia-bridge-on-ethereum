@@ -54,7 +54,7 @@ contract DarwiniaMappingTokenFactory is Initializable, Ownable {
     }
 
     function deploy(bytes32 salt, bytes memory code) internal returns (address payable addr) {
-        bytes32 newsalt = keccak256(abi.encodePacked(salt, msg.sender)); 
+        bytes32 newsalt = keccak256(abi.encodePacked(salt, msg.sender));
         assembly {
             addr := create2(0, add(code, 0x20), mload(code), newsalt)
             if iszero(extcodesize(addr)) { revert(0, 0) }
@@ -73,7 +73,7 @@ contract DarwiniaMappingTokenFactory is Initializable, Ownable {
         bytes32 salt = keccak256(abi.encodePacked(backing, source));
         require(tokenMap[salt] == address(0), "contract has been deployed");
         bytes memory bytecode = type(TransparentUpgradeableProxy).creationCode;
-        bytes memory erc20initdata = 
+        bytes memory erc20initdata =
             abi.encodeWithSignature("initialize(string,string,uint8)",
                                     name,
                                     symbol,
@@ -123,9 +123,9 @@ contract DarwiniaMappingTokenFactory is Initializable, Ownable {
                                       weight,
                                       info.tokenType,
                                       info.backing,
-                                      msg.sender, 
-                                      info.source, 
-                                      recipient, 
+                                      msg.sender,
+                                      info.source,
+                                      recipient,
                                       amount,
                                       msg.value)));
         require(encodeSuccess, "burn: encode dispatch failed");

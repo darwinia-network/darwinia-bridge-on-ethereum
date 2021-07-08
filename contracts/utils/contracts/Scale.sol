@@ -97,7 +97,7 @@ library Scale {
         bytes memory header
     ) internal pure returns (uint32 blockNumber) {
         Input.Data memory data = Input.from(header);
-        
+
         // skip parentHash(Hash)
         data.shiftBytes(32);
 
@@ -105,7 +105,7 @@ library Scale {
     }
 
     // little endian
-    function decodeMMRRoot(Input.Data memory data) 
+    function decodeMMRRoot(Input.Data memory data)
         internal
         pure
         returns (bytes memory prefix, bytes4 methodID, uint32 width, bytes32 root)
@@ -135,31 +135,31 @@ library Scale {
 
     // decode authorities prefix
     // (crab, darwinia)
-    function decodePrefix(Input.Data memory data) 
+    function decodePrefix(Input.Data memory data)
         internal
         pure
-        returns (bytes memory prefix) 
+        returns (bytes memory prefix)
     {
         prefix = decodeByteArray(data);
     }
 
     // decode Ethereum address
-    function decodeEthereumAddress(Input.Data memory data) 
+    function decodeEthereumAddress(Input.Data memory data)
         internal
         pure
-        returns (address payable addr) 
+        returns (address payable addr)
     {
         bytes memory bys = data.decodeBytesN(20);
         assembly {
             addr := mload(add(bys,20))
-        } 
+        }
     }
 
     // decode Balance
-    function decodeBalance(Input.Data memory data) 
+    function decodeBalance(Input.Data memory data)
         internal
         pure
-        returns (uint128) 
+        returns (uint128)
     {
         bytes memory balance = data.decodeBytesN(16);
         return uint128(reverseBytes16(balance.toBytes16(0)));
@@ -183,21 +183,21 @@ library Scale {
     }
 
     // decode darwinia network account Id
-    function decodeAccountId(Input.Data memory data) 
+    function decodeAccountId(Input.Data memory data)
         internal
         pure
-        returns (bytes32 accountId) 
+        returns (bytes32 accountId)
     {
         accountId = data.decodeBytes32();
     }
 
-    // decodeReceiptProof receives Scale Codec of Vec<Vec<u8>> structure, 
+    // decodeReceiptProof receives Scale Codec of Vec<Vec<u8>> structure,
     // the Vec<u8> is the proofs of mpt
     // returns (bytes[] memory proofs)
-    function decodeReceiptProof(Input.Data memory data) 
+    function decodeReceiptProof(Input.Data memory data)
         internal
         pure
-        returns (bytes[] memory proofs) 
+        returns (bytes[] memory proofs)
     {
         proofs = decodeVecBytesArray(data);
     }
@@ -206,7 +206,7 @@ library Scale {
     function decodeVecBytesArray(Input.Data memory data)
         internal
         pure
-        returns (bytes[] memory v) 
+        returns (bytes[] memory v)
     {
         uint32 vecLenght = decodeU32(data);
         v = new bytes[](vecLenght);
@@ -302,7 +302,7 @@ library Scale {
         }
     }
 
-    // convert BigEndian to LittleEndian 
+    // convert BigEndian to LittleEndian
     function reverseBytes16(bytes16 input) internal pure returns (bytes16 v) {
         v = input;
 

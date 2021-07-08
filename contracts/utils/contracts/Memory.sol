@@ -46,7 +46,7 @@ library Memory {
 		}
 		copy(addr, btsptr, len);
 	}
-	
+
 	// Copies 'self' into a new 'bytes memory'.
 	// Returns the newly created 'bytes memory'
 	// The returned bytes will be of length '32'.

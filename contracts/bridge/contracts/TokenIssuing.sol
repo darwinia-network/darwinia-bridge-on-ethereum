@@ -53,7 +53,7 @@ contract TokenIssuing is DailyLimit, Ownable, Pausable, Initializable {
     // signatures - the signatures for mmr-root msg
     // root, MMRIndex - mmr root for the block
     // blockNumber, blockHeader - The block where the lock token event occurred in darwinia network
-    // can be fetched by api.rpc.chain.getHeader('block hash') 
+    // can be fetched by api.rpc.chain.getHeader('block hash')
     // peaks, siblings - mmr proof for the blockNumber
     // eventsProofStr - mpt proof for events
     // Vec<Vec<u8>> encoded by Scale codec
@@ -70,7 +70,7 @@ contract TokenIssuing is DailyLimit, Ownable, Pausable, Initializable {
       public
       whenNotPaused
     {
-      // If the root of this index already exists in the mmr root pool, 
+      // If the root of this index already exists in the mmr root pool,
       // skip append root to save gas
       if(relay.getMMRRoot(MMRIndex) == bytes32(0)) {
         relay.appendRoot(message, signatures);
@@ -86,7 +86,7 @@ contract TokenIssuing is DailyLimit, Ownable, Pausable, Initializable {
         bytes32[] memory peaks,
         bytes32[] memory siblings,
         bytes memory eventsProofStr
-    ) 
+    )
       public
       whenNotPaused
     {
@@ -95,7 +95,7 @@ contract TokenIssuing is DailyLimit, Ownable, Pausable, Initializable {
         require(!history[blockNumber], "TokenIssuing:: verifyProof:  The block has been verified");
 
         Input.Data memory data = Input.from(relay.verifyRootAndDecodeReceipt(root, MMRIndex, blockNumber, blockHeader, peaks, siblings, eventsProofStr, storageKey));
-        
+
         ScaleStruct.LockEvent[] memory events = Scale.decodeLockEvents(data);
 
         address ring = registry.addressOf(bytes32("CONTRACT_RING_ERC20_TOKEN"));
@@ -130,10 +130,10 @@ contract TokenIssuing is DailyLimit, Ownable, Pausable, Initializable {
       return SafeMath.mul(darwiniaValue, 1000000000);
     }
 
-    /// ==== onlyOwner ==== 
+    /// ==== onlyOwner ====
     function setStorageKey(bytes memory key) public onlyOwner {
       storageKey = key;
-    } 
+    }
 
     function unpause() public onlyOwner {
         _unpause();

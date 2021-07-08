@@ -32,11 +32,11 @@ contract Relay is Ownable, Pausable, Initializable {
     ///
     /// Function: appendRoot(bytes memory message,bytes[] memory signatures)
     /// MethodID: 0x479fbdf9
-    /// 
+    ///
 
     struct Relayers {
         // Each time the relay set is updated, the nonce is incremented
-        // After the first "updateRelayer" call, the nonce value is equal to 1, 
+        // After the first "updateRelayer" call, the nonce value is equal to 1,
         // which is different from the field "Term" at the node.
         address[] member;
         uint32 nonce;
@@ -49,7 +49,7 @@ contract Relay is Ownable, Pausable, Initializable {
     bytes private networkPrefix;
 
     // index => mmr root
-    // In the Darwinia Network, the mmr root of block 1000 
+    // In the Darwinia Network, the mmr root of block 1000
     // needs to be queried in Log-Other of block 1001.
     mapping(uint32 => bytes32) public mmrRootPool;
 
@@ -69,14 +69,14 @@ contract Relay is Ownable, Pausable, Initializable {
     ) public initializer {
         ownableConstructor();
         pausableConstructor();
-        
+
         _appendRoot(_MMRIndex, _genesisMMRRoot);
         _resetRelayer(_nonce, _relayers);
         _setNetworkPrefix(_prefix);
         _setRelayThreshold(_threshold);
     }
 
-    /// ==== Getters ==== 
+    /// ==== Getters ====
     function getRelayerCount() public view returns (uint256) {
         return relayers.member.length;
     }
@@ -111,7 +111,7 @@ contract Relay is Ownable, Pausable, Initializable {
 
         bytes[] memory proofs = Scale.decodeReceiptProof(data);
         bytes memory result = SimpleMerkleProof.getEvents(root, key, proofs);
-        
+
         return result;
     }
 
@@ -132,20 +132,20 @@ contract Relay is Ownable, Pausable, Initializable {
       return nonce == getRelayerNonce();
     }
 
-    /// ==== Setters ==== 
+    /// ==== Setters ====
 
     // When the darwinia network authorities set is updated, bridger or other users need to submit the new authorities set to the reporter contract by calling this method.
     // message - prefix + nonce + [...relayers]
     // struct{vec<u8>, u32, vec<EthereumAddress>}
     // signatures - signed by personal_sign
-    // beneficiary - Keeping the authorities set up-to-date is advocated between the relay contract contract and the darwinia network, and the darwinia network will give partial rewards to the benifit account. benifit is the public key of a darwinia network account
+    // beneficiary - Keeping the authorities set up-to-date is advocated between the relay contract contract and the darwinia network, and the darwinia network will give partial rewards to the benefit account. benefit is the public key of a darwinia network account
     function updateRelayer(
         bytes memory message,
         bytes[] memory signatures,
         bytes32 beneficiary
     ) public whenNotPaused {
         // verify hash, signatures (The number of signers must be greater than _threshold)
-        require( 
+        require(
             _checkSignature(message, signatures),
             "Relay: Bad relayer signature"
         );
@@ -155,7 +155,7 @@ contract Relay is Ownable, Pausable, Initializable {
         (bytes memory prefix, bytes4 methodID, uint32 nonce, address[] memory authorities) = Scale.decodeAuthorities(
             data
         );
-        
+
         require(checkNetworkPrefix(prefix), "Relay: Bad network prefix");
         require(methodID == hex"b4bcf497", "Relay: Bad method ID");
         require(checkRelayerNonce(nonce), "Relay: Bad relayer set nonce");
@@ -234,7 +234,7 @@ contract Relay is Ownable, Pausable, Initializable {
     }
 
 
-    /// ==== onlyOwner ==== 
+    /// ==== onlyOwner ====
     function resetRoot(uint32 index, bytes32 root) public onlyOwner {
         _setRoot(index, root);
         emit ResetRootEvent(_msgSender(), root, index);
@@ -260,14 +260,14 @@ contract Relay is Ownable, Pausable, Initializable {
         _resetRelayer(nonce, accounts);
     }
 
-    /// ==== Internal ==== 
+    /// ==== Internal ====
     function _updateRelayer(uint32 nonce, address[] memory accounts, bytes32 beneficiary) internal {
         require(accounts.length > 0, "Relay: accounts is empty");
 
         emit SetAuthoritiesEvent(nonce, accounts, beneficiary);
 
         relayers.member = accounts;
-        relayers.nonce = getRelayerNonce() + 1;    
+        relayers.nonce = getRelayerNonce() + 1;
     }
 
     function _resetRelayer(uint32 nonce, address[] memory accounts) internal {
@@ -298,11 +298,11 @@ contract Relay is Ownable, Pausable, Initializable {
         relayers.threshold = _threshold;
     }
 
-    // This method verifies the content of msg by verifying the existing authority collection in the contract. 
-    // Ecdsa.recover can recover the signer’s address. 
-    // If the signer is matched "isRelayer", it will be counted as a valid signature 
-    // and all signatures will be restored. 
-    // If the number of qualified signers is greater than Equal to threshold, 
+    // This method verifies the content of msg by verifying the existing authority collection in the contract.
+    // Ecdsa.recover can recover the signer’s address.
+    // If the signer is matched "isRelayer", it will be counted as a valid signature
+    // and all signatures will be restored.
+    // If the number of qualified signers is greater than Equal to threshold,
     // the verification is considered successful, otherwise it fails
     function _checkSignature(
         bytes memory message,
@@ -320,13 +320,13 @@ contract Relay is Ownable, Pausable, Initializable {
         }
 
         require(!hasDuplicate(signers), "Relay:: hasDuplicate: Duplicate entries in list");
-        
+
         for (uint256 i = 0; i < signatures.length; i++) {
             if (isRelayer(signers[i])) {
                count++;
             }
         }
-        
+
         uint8 threshold = uint8(
             SafeMath.div(SafeMath.mul(count, 100), getRelayerCount())
         );

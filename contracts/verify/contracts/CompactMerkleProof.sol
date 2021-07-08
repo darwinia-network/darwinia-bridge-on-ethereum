@@ -75,8 +75,8 @@ contract CompactMerkleProof {
 
 	/**
      * @dev Returns true if `keys ans values` can be proved to be a part of a Merkle tree
-     * defined by `root`. For this, a `proof` must be provided, is a sequence of the subset 
-     * of nodes in the trie traversed while performing lookups on all keys. The trie nodes 
+     * defined by `root`. For this, a `proof` must be provided, is a sequence of the subset
+     * of nodes in the trie traversed while performing lookups on all keys. The trie nodes
      * are listed in pre-order traversal order with some values and internal hashes omitted.
      */
     function verify(
@@ -334,7 +334,7 @@ contract CompactMerkleProof {
      */
     function encodeNode(StackEntry memory entry)
         internal
-        pure 
+        pure
         returns (bytes memory)
     {
         if (entry.kind == NODEKIND_NOEXT_LEAF) {

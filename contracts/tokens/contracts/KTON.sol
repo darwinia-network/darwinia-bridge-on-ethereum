@@ -101,7 +101,7 @@ contract KTON is DSToken("KTON"), ERC223 {
             if (!TokenController(controller).onApprove(msg.sender, _spender, _amount))
                 revert();
         }
-        
+
         return super.approve(_spender, _amount);
     }
 

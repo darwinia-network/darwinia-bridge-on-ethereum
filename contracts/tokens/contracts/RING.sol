@@ -171,7 +171,7 @@ contract RING is DSToken("RING"), ERC223, ISmartToken {
             if (!TokenController(controller).onApprove(msg.sender, _spender, _amount))
                 revert();
         }
-        
+
         return super.approve(_spender, _amount);
     }
 

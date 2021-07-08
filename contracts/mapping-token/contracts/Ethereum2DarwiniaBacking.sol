@@ -130,7 +130,7 @@ contract Ethereum2DarwiniaBacking is Initializable, Ownable {
     // This function receives two kind of event proof from darwinia
     // One is token register response proof, and use it to confirm the mapped contract address on darwinia
     // the other is token burn event proof from darwinia, and use it to redeem asset locked on ethereum
-    // it use relay contract to proof the event and it's block. 
+    // it use relay contract to proof the event and it's block.
     // So if the mmr root has not been appended to relay. we must append it first.
     // Once the event is proved valid. We decode it and `save the mapped address`/`unlock users token`
 
@@ -140,7 +140,7 @@ contract Ethereum2DarwiniaBacking is Initializable, Ownable {
     // root - mmr root for the block
     // MMRIndex - mmr index of the block
     // blockNumber, blockHeader - The block where the event occured on darwinia network
-    // can be fetched by api.rpc.chain.getHeader('block hash') 
+    // can be fetched by api.rpc.chain.getHeader('block hash')
     // peaks, siblings - mmr proof for the blockNumber, like a merkle proof
     // eventsProofStr - mpt proof for events Vec<Vec<u8>> encoded by Scale codec
     // Notes: params can be getted by bridger's[https://github.com/darwinia-network/bridger] command `info-d2e`

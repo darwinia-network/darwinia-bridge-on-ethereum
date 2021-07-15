@@ -19,7 +19,7 @@
     "rebuild": "run-s clean build"
   },
   "config": {
-    "contractsPackages": "@darwinia/contracts-bridge @darwinia/contracts-issuing-build @darwinia/contracts-mapping-token @darwinia/contracts-tokens @darwinia/contracts-util @darwinia/contracts-verify",
+    "contractsPackages": "@darwinia/contracts-bridge @darwinia/contracts-issuing-backing @darwinia/contracts-mapping-token @darwinia/contracts-tokens @darwinia/contracts-util @darwinia/contracts-verify",
     "nonContractsPackages": "@darwinia/addresses @darwinia/assets"
   },
   "devDependencies": {

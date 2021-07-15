@@ -1,13 +1,12 @@
 {
-  "name": "@darwinia/contracts-utils",
+  "name": "@darwinia/contracts-issuing-backing",
   "version": "1.0.0",
-  "description": "Smart contract utils of darwinia",
   "main": "index.js",
   "repository": "https://github.com/darwinia-network/darwinia-bridge-sol.git",
   "author": "Darwinia dev",
   "license": "MIT",
   "scripts": {
-    "build": "npx hardhat compile",
+    "build": "hardhat compile",
     "test": "npx hardhat test",
     "clean": "shx rm -rf cache artifacts abi"
   },
@@ -15,13 +14,11 @@
     "@nomiclabs/hardhat-ethers": "^2.0.2",
     "@nomiclabs/hardhat-etherscan": "^2.1.2",
     "@nomiclabs/hardhat-waffle": "^2.0.1",
-    "chai": "^4.3.4",
     "dotenv": "^10.0.0",
     "ethereum-waffle": "^3.0.0",
     "ethers": "^5.0.0",
     "hardhat": "^2.3.0",
     "hardhat-abi-exporter": "^2.2.1",
-    "hardhat-gas-reporter": "^1.0.4",
     "shx": "^0.3.3"
   }
 }

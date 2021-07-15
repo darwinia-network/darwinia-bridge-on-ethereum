@@ -1,7 +1,6 @@
 require("@nomiclabs/hardhat-waffle");
 require("@nomiclabs/hardhat-etherscan");
 require('hardhat-abi-exporter');
-require("hardhat-gas-reporter");
 
 require('dotenv').config({ path: '../../.env' })
 
@@ -48,6 +47,31 @@ module.exports = {
             }
           }
         }
+      },
+      {
+        version: "0.4.24",
+        settings: {
+          evmVersion: "byzantium",
+          optimizer: {
+            enabled: true,
+            runs: 999999
+          },
+          outputSelection: {
+            "*": {
+              "*": [
+                "abi",
+                "devdoc",
+                "metadata",
+                "evm.bytecode.object",
+                "evm.bytecode.sourceMap",
+                "evm.deployedBytecode.object",
+                "evm.deployedBytecode.sourceMap",
+                "evm.methodIdentifiers"
+              ],
+              "": ["ast"]
+            }
+          }
+        }
       }
     ]
   },
@@ -57,7 +81,7 @@ module.exports = {
     cache: "./cache",
     artifacts: "./artifacts"
   },
-  defaultNetwork: 'hardhat',
+  defaultNetwork: 'ropsten',
   networks: {
     hardhat: {
     },

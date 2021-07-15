@@ -1,6 +1,6 @@
 const { expect } = require("chai");
 const { BigNumber } = require("ethers");
-const { solidity, MockProvider, deployContract } = require("ethereum-waffle");
+const { solidity, MockProvider } = require("ethereum-waffle");
 const {
   signatureSubstrateToEthereum,
   buildCommitment,
